@@ -7,22 +7,31 @@ from .aya_dict import surah_aya
 class QuranCopyPaste(ft.Column):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # text input
         self.textfield = ft.TextField(label='Index', hint_text='Surah:Ayah', width=350)
+        
+        # buttons
         self.sub_button = ft.IconButton(icon=ft.icons.CHECK_SHARP, on_click=self.show_ayah)
-        self.copy_button = ft.IconButton(icon=ft.icons.COPY_SHARP, on_click=self.copy)
-        self.save_font_button = ft.IconButton(icon=ft.icons.DOWNLOAD_SHARP, on_click=self.save_font_dialog)
-        self.buttons = [self.sub_button, self.copy_button, self.save_font_button]
-        self.quran_txt = ft.Text(size=42, text_align=ft.TextAlign.CENTER)
-        self.quran_txt_cont = ft.Container(self.quran_txt,
-                                           margin=ft.Margin(left=200, top=10,
-                                                            right=200, bottom=20))
-        self.curr_font = None
+        self.copy_button = ft.TextButton(icon=ft.icons.COPY_SHARP, text='Copy text', on_click=self.copy)
+        self.save_font_button = ft.TextButton(icon=ft.icons.DOWNLOAD_SHARP, text='Download font', on_click=self.save_font_dialog)
+        
+        self.input_controls = ft.Row([self.textfield, self.sub_button], alignment=ft.MainAxisAlignment.CENTER)
+        self.arabic_controls = ft.Row([self.copy_button, self.save_font_button], alignment=ft.MainAxisAlignment.CENTER)
+        
         self.font_info = ft.Text(size=15)
+        self.quran_txt = ft.Text(size=42, text_align=ft.TextAlign.CENTER)
+        self.quran_txt_controls = ft.Column([self.quran_txt,
+                                             self.font_info,
+                                             self.arabic_controls],
+                                            horizontal_alignment=ft.CrossAxisAlignment.CENTER, visible=False)
+        
+        self.quran_txt_controls_container = ft.Container(content=self.quran_txt_controls,
+                                                         margin=ft.Margin(left=200, top=10,
+                                                                right=200, bottom=20))
+        self.curr_font = None
         self.controls = [
-            self.textfield,
-            ft.Row(self.buttons, alignment=ft.MainAxisAlignment.CENTER),
-            self.quran_txt_cont,
-            self.font_info
+            self.input_controls,
+            self.quran_txt_controls
         ]
         
         # No matter what, this vertical alignment of column have no effect.
@@ -39,31 +48,39 @@ class QuranCopyPaste(ft.Column):
         time.sleep(1.5)  # for the font to load (on my connection 😅)
     
     def show_ayah(self, e):
+        # resetting values
         self.quran_txt.value = ''  # resetting the old values that were
         self.font_info.value = ''  # set by previous function calls
-        self.quran_txt_cont.content = self.quran_txt  #
+        self.quran_txt_controls.controls[0] = self.quran_txt  #
+        self.quran_txt_controls.visible = False
+        
+        # getting data
         ayah_data = surah_aya[self.textfield.value]  # in surah:ayah form
         ayah_text = ayah_data[0]
         font = ayah_data[1]
-
+        
+        # prepare font family
         self.prep_font(font)
         
+        # set fonts
         self.quran_txt.font_family = font
         self.curr_font = font
         
-        old_quran_txt_cont = self.quran_txt_cont.content  # "..." appear even when len(ayah_text) is lesser than 6
-        if len(ayah_text) >= 6:  # the solution is to save the old state of container content(s)
+        if len(ayah_text) > 6:  # the solution is to save the old state of container content(s)
             self.quran_txt.value = ayah_text[:7]
-            self.quran_txt_cont.content = ft.Row([
+            # self.quran_text_controls.controls[0] was self.quran_txt
+            self.quran_txt_controls.controls[0] = ft.Row([
                 ft.Text(value='...', size=25),
-                self.quran_txt  # appears like this: ... <arabic of ayah>
+                self.quran_txt
             ], alignment=ft.MainAxisAlignment.CENTER)
+            self.quran_txt_controls.visible = True
             self.font_info.value = f'The font is: {font}.ttf'
             self.update()
             return
         
         self.quran_txt.value = ayah_text
         self.font_info.value = f'The font is: {font}.ttf'
+        self.quran_txt_controls.visible = True
         self.update()
     
     def copy(self, e):
