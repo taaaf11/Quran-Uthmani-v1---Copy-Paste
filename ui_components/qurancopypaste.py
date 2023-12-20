@@ -8,12 +8,12 @@ class QuranCopyPaste(ft.Column):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # text input
-        self.textfield = ft.TextField(label='Index', hint_text='Surah:Ayah', width=350)
+        self.textfield = ft.TextField(label='Index', hint_text='Surah:Ayah', width=350, on_submit=self.show_ayah)
         
         # buttons
-        self.sub_button = ft.IconButton(icon=ft.icons.CHECK_SHARP, on_click=self.show_ayah)
-        self.copy_button = ft.TextButton(icon=ft.icons.COPY_SHARP, text='Copy text', on_click=self.copy)
-        self.save_font_button = ft.TextButton(icon=ft.icons.DOWNLOAD_SHARP, text='Download font', on_click=self.save_font_dialog)
+        self.sub_button = ft.TextButton(icon=ft.icons.CHECK_SHARP, on_click=self.show_ayah)
+        self.copy_button = ft.ElevatedButton(icon=ft.icons.COPY_SHARP, text='Copy text', on_click=self.copy)
+        self.save_font_button = ft.ElevatedButton(icon=ft.icons.DOWNLOAD_SHARP, text='Download font', on_click=self.save_font_dialog)
         
         self.input_controls = ft.Row([self.textfield, self.sub_button], alignment=ft.MainAxisAlignment.CENTER)
         self.arabic_controls = ft.Row([self.copy_button, self.save_font_button], alignment=ft.MainAxisAlignment.CENTER)
