@@ -112,7 +112,10 @@ class QuranCopyPaste(ft.Column):
         # prepare font family
         self.prep_font(display_font)
         
-        self._shorten_arabic_text_container(ayah_text)  # adds to quran_txt automatically
+        if len(ayah_text) > 6:
+            self._shorten_arabic_text_container(ayah_text)  # adds to quran_txt automatically
+        else:
+            self.quran_txt.value = ayah_text
         self.quran_txt.font_family = display_font
         self.font_info.value = f'The font is: {display_font}.ttf'
         self.quran_txt_controls.visible = True
