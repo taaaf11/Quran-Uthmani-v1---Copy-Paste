@@ -48,7 +48,7 @@ def main(page: ft.Page):
         text_align=ft.TextAlign.CENTER, size=20),
         ft.Text('\n'),
         ft.OutlinedButton(icon=ft.icons.LINK_ROUNDED, text='Source code',
-                          on_click=lambda _:page.launch_url(''))  # add github repo url
+                          on_click=lambda _:page.launch_url('https://github.com/taaaf11/Quran-Uthmani-v1---Copy-Paste'))  # add github repo url
     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, visible=False)
     
     page.add(home_page, help_page)
